@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    runtime: 'nodejs'
-  }
+  // Remove invalid runtime configuration
 };
 
 export default nextConfig;

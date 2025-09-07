@@ -6,6 +6,13 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const country = searchParams.get("country") || "Brazil";
+    
+    if (!country.trim()) {
+      return NextResponse.json(
+        { error: "Country parameter is required" },
+        { status: 400 }
+      );
+    }
 
     const query = `
       WITH hist AS (
@@ -30,11 +37,35 @@ export async function GET(req: Request) {
       SELECT * FROM fc
       ORDER BY ds;
     `;
+    
     const bq = getBigQuery();
-    const [rows] = await bq.query({ query, params: { country } });
-    return NextResponse.json(rows);
-  } catch (e: any) {
-    console.error(e);
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    const [rows] = await bq.query({ 
+      query, 
+      params: { country },
+      location: 'US'
+    });
+    
+    // Add metadata to response
+    return NextResponse.json({
+      data: rows,
+      country,
+      count: rows.length,
+      timestamp: new Date().toISOString(),
+      data_source: "BigQuery - qst843-ecb.climate_ds"
+    });
+    
+  } catch (error) {
+    console.error("Timeseries API Error:", error);
+    
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    
+    return NextResponse.json(
+      { 
+        error: "Failed to fetch timeseries data",
+        details: errorMessage,
+        timestamp: new Date().toISOString()
+      },
+      { status: 500 }
+    );
   }
 }
