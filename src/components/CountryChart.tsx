@@ -27,14 +27,24 @@ const formatValue = (value: number) => {
   return value.toFixed(1);
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    name: string;
+    value: number;
+    color: string;
+  }>;
+  label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg p-4">
         <p className="font-semibold text-gray-900 dark:text-white mb-2">
           {formatDate(label)}
         </p>
-        {payload.map((entry: any, index: number) => (
+        {payload.map((entry, index: number) => (
           <div key={index} className="flex items-center gap-2 mb-1">
             <div 
               className="w-3 h-3 rounded-full" 

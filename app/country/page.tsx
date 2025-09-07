@@ -13,15 +13,23 @@ interface KPIData {
 }
 
 interface TimeseriesResponse {
-  data: any[];
+  data: Row[];
   country: string;
   count: number;
   timestamp: string;
   data_source: string;
 }
 
+interface Row {
+  ds: string;
+  loss_km2?: number | null;
+  loss_km2_pred?: number | null;
+  loss_km2_lo?: number | null;
+  loss_km2_hi?: number | null;
+}
+
 export default function CountryPage() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Row[]>([]);
   const [country, setCountry] = useState("Brazil");
   const [kpis, setKpis] = useState<KPIData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -34,7 +42,7 @@ export default function CountryPage() {
       const result = await response.json();
       setConnectionStatus(result.success ? "connected" : "error");
       return result.success;
-    } catch (error) {
+    } catch {
       setConnectionStatus("error");
       return false;
     }
@@ -73,10 +81,9 @@ export default function CountryPage() {
       const kpiData: KPIData = await kpRes.json();
       
       // Handle Earth Engine data (optional - don't fail if it's not available)
-      let geeData = null;
       if (geeRes.ok) {
         try {
-          geeData = await geeRes.json();
+          await geeRes.json();
         } catch (e) {
           console.warn("Failed to parse Earth Engine data:", e);
         }
@@ -90,8 +97,8 @@ export default function CountryPage() {
       if (tsData.count === 0) {
         setErr(`No data found for country "${c}". Please try a different country.`);
       }
-    } catch (e: any) {
-      setErr(e.message || String(e));
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }
@@ -99,7 +106,7 @@ export default function CountryPage() {
 
   useEffect(() => { 
     load(country); 
-  }, []);
+  }, [country]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
