@@ -1,6 +1,6 @@
-# 🌍 Climate Data Dashboard
+# 🌍 Google Earth Engine Climate Dashboard
 
-A modern Next.js application for visualizing forest loss data and climate trends across different countries using Google BigQuery and interactive charts.
+A modern Next.js application for visualizing forest loss data and climate trends across different countries using Google BigQuery and Google Earth Engine integration.
 
 ## ✨ Features
 
@@ -226,3 +226,11 @@ For support and questions:
 ---
 
 **Happy analyzing! 🌱📊**
+
+---
+
+## About
+
+Google Alpha Earth Climate at Woodwell Climate Research Center with Sundai Club MIT
+
+**Live Demo**: [google-earth-engine-climate.vercel.app](https://google-earth-engine-climate.vercel.app)
